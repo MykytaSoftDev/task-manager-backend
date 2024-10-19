@@ -21,13 +21,10 @@ export class AuthController {
 	@HttpCode(200)
 	@Post('login')
 	async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
-		const {
-			tokens: { refreshToken },
-			...response
-		} = await this.authService.login(dto)
-		this.authService.addRefreshTokenToResponse(res, refreshToken)
+		const { tokens, ...response } = await this.authService.login(dto)
+		this.authService.addRefreshTokenToResponse(res, tokens.refreshToken)
 
-		return response
+		return { response, accessToken: tokens.accessToken }
 	}
 
 	@UsePipes(new ValidationPipe())
